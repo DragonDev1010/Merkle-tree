@@ -1,5 +1,7 @@
 const ZamStacking = artifacts.require("ZamStacking");
+const TestToken = artifacts.require("TestToken")
 
-module.exports = function (deployer) {
-  deployer.deploy(ZamStacking);
+module.exports = async function (deployer) {
+  	await deployer.deploy(ZamStacking);
+  	await deployer.deploy(TestToken, "ZamStake", "ZAM")
 };
