@@ -43,30 +43,25 @@ contract ZAMNFT is ERC721Enumerable, IERC2981, Ownable {
         royaltyAddress = owner();
         royaltyPercent = 5;
     }
-
     function _baseURI() internal view virtual override returns (string memory) {
         return baseURI;
     }
-    function setVerify_1(bytes32 root) public onlyOwner {
-        root_1 = root;
+    function setVerify(bytes32 root, uint level) public onlyOwner {
+        if (level == 1)
+            root_1 = root;
+        else if (level == 2)
+            root_2 = root;
+        else
+            root_3 = root;
     }
-    function setVerify_2(bytes32 root) public onlyOwner {
-        root_2 = root;
-    }
-    function setVerify_3(bytes32 root) public onlyOwner {
-        root_3 = root;
-    }
-    function verify_1(bytes32[] memory proof) public view returns(bool) {
+    function verify(bytes32[] memory proof, uint level) public view returns(bool) {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        return MerkleProof.verify(proof, root_1, leaf);
-    }
-    function verify_2(bytes32[] memory proof) public view returns(bool) {
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        return MerkleProof.verify(proof, root_2, leaf);
-    }
-    function verify_3(bytes32[] memory proof) public view returns(bool) {
-        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
-        return MerkleProof.verify(proof, root_3, leaf);
+        if (level == 1)
+            return MerkleProof.verify(proof, root_1, leaf);
+        else if (level == 2)
+            return MerkleProof.verify(proof, root_2, leaf);
+        else 
+            return MerkleProof.verify(proof, root_3, leaf);
     }
     function mint(uint256 _mintAmount) public payable {
         uint256 supply = totalSupply();
