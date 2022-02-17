@@ -5,6 +5,7 @@ pragma solidity >=0.8.4 <0.9.0;
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 contract ZAMNFT is ERC721Enumerable, IERC2981, Ownable {
     using Strings for uint256;
@@ -27,6 +28,12 @@ contract ZAMNFT is ERC721Enumerable, IERC2981, Ownable {
     mapping(address => bool) public secondLevel;
     mapping(address => bool) public thirdLevel;
 
+    bytes32 root_1;
+
+    bytes32 root_2;
+
+    bytes32 root_3;
+
     constructor(
         string memory _name,
         string memory _symbol,
@@ -40,7 +47,27 @@ contract ZAMNFT is ERC721Enumerable, IERC2981, Ownable {
     function _baseURI() internal view virtual override returns (string memory) {
         return baseURI;
     }
-
+    function setVerify_1(bytes32 root) public onlyOwner {
+        root_1 = root;
+    }
+    function setVerify_2(bytes32 root) public onlyOwner {
+        root_2 = root;
+    }
+    function setVerify_3(bytes32 root) public onlyOwner {
+        root_3 = root;
+    }
+    function verify_1(bytes32[] memory proof) public view returns(bool) {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        return MerkleProof.verify(proof, root_1, leaf);
+    }
+    function verify_2(bytes32[] memory proof) public view returns(bool) {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        return MerkleProof.verify(proof, root_2, leaf);
+    }
+    function verify_3(bytes32[] memory proof) public view returns(bool) {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        return MerkleProof.verify(proof, root_3, leaf);
+    }
     function mint(uint256 _mintAmount) public payable {
         uint256 supply = totalSupply();
         require(!paused);
