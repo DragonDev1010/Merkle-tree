@@ -204,4 +204,9 @@ contract('New NFT contract testing', (accounts) => {
         res = await nft.balanceOf(specialList[0])
         assert.equal(res, 2, 'level-1 owner balance')
     })
+
+    it('balance eth', async() => {
+        res = await web3.eth.getBalance(nft.address)
+        console.log(res.toString())
+    })
 })
