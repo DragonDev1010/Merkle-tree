@@ -211,11 +211,24 @@ contract('New NFT contract testing', (accounts) => {
     })
 
     it('check level', async() => {
-        const proof_1 = merkleTree_1.getHexProof(lvl_3[0]);
-        const proof_2 = merkleTree_2.getHexProof(lvl_3[0]);
-        const proof_3 = merkleTree_3.getHexProof(lvl_3[0]);
-        console.log(proof_1)
-        console.log(proof_2)
-        console.log(proof_3)
+        let level
+        let proof_1, proof_2, proof_3
+        try {
+            proof_1 = merkleTree_1.getHexProof(lvl_3[0]);
+        } catch (error) {}
+
+        try {
+            proof_2 = merkleTree_2.getHexProof(lvl_3[0]);
+        } catch (error) {}
+
+        try {
+            proof_3 = merkleTree_3.getHexProof(lvl_3[0]);
+        } catch (error) {}
+
+        if(proof_1 !== undefined) level = 1
+        if(proof_2 !== undefined) level = 2
+        if(proof_3 !== undefined) level = 3
+
+        console.log("level: ", level)
     })
 })
