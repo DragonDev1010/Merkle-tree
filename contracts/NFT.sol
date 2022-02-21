@@ -21,19 +21,19 @@ contract ZAMNFT is ERC721, Ownable {
     address[] public specialList;
     mapping(address => uint256) public specailListMaxMintAmount;
 
-    bytes32 root_1;
-    bytes32 root_2;
-    bytes32 root_3;
+    bytes32 private root_1;
+    bytes32 private root_2;
+    bytes32 private root_3;
 
-    uint256 minted_1;
-    uint256 minted_2;
-    uint256 minted_3;
-    uint256 minted_owner;
+    uint256 public minted_1;
+    uint256 public minted_2;
+    uint256 public minted_3;
+    uint256 public minted_owner;
 
-    uint256 totalLevel1 = 7000;
-    uint256 totalLevel2 = 1500;
-    uint256 totalLevel3 = 172;
-    uint256 totalOwner = 216;
+    uint256 public totalLevel1 = 7000;
+    uint256 public totalLevel2 = 1500;
+    uint256 public totalLevel3 = 172;
+    uint256 public totalOwner = 216;
 
     constructor(
         string memory _name,
@@ -41,8 +41,8 @@ contract ZAMNFT is ERC721, Ownable {
         string memory _initBaseURI
     ) ERC721(_name, _symbol) {
         setBaseURI(_initBaseURI);
-        minted_2 = totalLevel1;
-        minted_3 = totalLevel1 + totalLevel2;
+        minted_2 = totalLevel1 - 1;
+        minted_3 = totalLevel1 + totalLevel2 - 1;
         minted_owner = totalLevel1 + totalLevel2 + totalLevel3;
     }
 
@@ -105,26 +105,23 @@ contract ZAMNFT is ERC721, Ownable {
             return MerkleProof.verify(proof, root_3, leaf);
     }
 
-    // function specialMint(uint256 amount) public {
-    //     require(!paused, "Mint is paused");
-    //     require(amount > 0, "Please enter mint amount greater than zero.");
-    // }
-
     function mint(uint256 amount, uint256 level, bytes32[] memory proof) public payable {
         // uint256 supply = totalSupply();
         require(!paused);
         require(amount > 0);
-        if(level == 4) {
+        if(inArray(msg.sender)) {
             require(amount < specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount");
+            require(!presale, "mint : special-list can mint in public-sale.");
+            _publicsale(msg.sender, amount, level);
         } else {
             require(amount < maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
-        }
-        if(presale) {
-            require(msg.value >= amount * preSalePrice, "mint : msg.value has to be greater than amount * price");
-            _presale(msg.sender, amount, level, proof);
-        } else {
-            require(msg.value >= amount * publicSalePrice, "mint : msg.value has to be greater than amount * price");
-            _publicsale(msg.sender, amount, level);
+            if(presale) {
+                require(msg.value >= amount * preSalePrice, "mint : msg.value has to be greater than amount * price");
+                _presale(msg.sender, amount, level, proof);
+            } else {
+                require(msg.value >= amount * publicSalePrice, "mint : msg.value has to be greater than amount * price");
+                _publicsale(msg.sender, amount, level);
+            }
         }
     }
 
@@ -154,5 +151,8 @@ contract ZAMNFT is ERC721, Ownable {
 
     function setPresale(bool state) public onlyOwner {
         presale = state;
+    }
+    function setPaused(bool state) public onlyOwner {
+        paused = state;
     }
 }
