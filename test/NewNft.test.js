@@ -209,4 +209,13 @@ contract('New NFT contract testing', (accounts) => {
         res = await web3.eth.getBalance(nft.address)
         console.log(res.toString())
     })
+
+    it('check level', async() => {
+        const proof_1 = merkleTree_1.getHexProof(lvl_3[0]);
+        const proof_2 = merkleTree_2.getHexProof(lvl_3[0]);
+        const proof_3 = merkleTree_3.getHexProof(lvl_3[0]);
+        console.log(proof_1)
+        console.log(proof_2)
+        console.log(proof_3)
+    })
 })
