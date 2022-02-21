@@ -20,14 +20,14 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">82.14% </span>
+        <span class="strong">77.97% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>46/56</span>
+        <span class='fraction'>46/59</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">56.82% </span>
+        <span class="strong">54.35% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>25/44</span>
+        <span class='fraction'>25/46</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">92.31% </span>
@@ -35,13 +35,13 @@
         <span class='fraction'>12/13</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">84.62% </span>
+        <span class="strong">80% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>44/52</span>
+        <span class='fraction'>44/55</span>
       </div>
     </div>
   </div>
-  <div class='status-line high'></div>
+  <div class='status-line medium'></div>
 <pre><table class="coverage">
 <tr><td class="line-count quiet">1
 2
@@ -309,24 +309,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -464,26 +464,26 @@ contract ZAMNFT is ERC721, Ownable {
             return MerkleProof.verify(proof, root_3, leaf);
     }
 &nbsp;
-    // function specialMint(uint256 amount) public {
-    //     require(!paused, "Mint is paused");
-    //     require(amount &gt; 0, "Please enter mint amount greater than zero.");
-    // }
-&nbsp;
     function mint(uint256 amount, uint256 level, bytes32[] memory proof) public payable {
         // uint256 supply = totalSupply();
         <span class="missing-if-branch" title="else path not taken" >E</span>require(!paused);
         <span class="missing-if-branch" title="else path not taken" >E</span>require(amount &gt; 0);
         <span class="missing-if-branch" title="if path not taken" >I</span>if(level == 4) {
 <span class="cstat-no" title="statement not covered" >            require(amount &lt; specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount")</span>;
+<span class="cstat-no" title="statement not covered" >            if(presale) {</span>
+<span class="cstat-no" title="statement not covered" >                _presale(msg.sender, amount, level, proof)</span>;
+            } else {
+<span class="cstat-no" title="statement not covered" >                _publicsale(msg.sender, amount, level)</span>;
+            }
         } else {
             <span class="missing-if-branch" title="else path not taken" >E</span>require(amount &lt; maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
-        }
-        if(presale) {
-            <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.value &gt;= amount * preSalePrice, "mint : msg.value has to be greater than amount * price");
-            _presale(msg.sender, amount, level, proof);
-        } else {
-            <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.value &gt;= amount * publicSalePrice, "mint : msg.value has to be greater than amount * price");
-            _publicsale(msg.sender, amount, level);
+            if(presale) {
+                <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.value &gt;= amount * preSalePrice, "mint : msg.value has to be greater than amount * price");
+                _presale(msg.sender, amount, level, proof);
+            } else {
+                <span class="missing-if-branch" title="else path not taken" >E</span>require(msg.value &gt;= amount * publicSalePrice, "mint : msg.value has to be greater than amount * price");
+                _publicsale(msg.sender, amount, level);
+            }
         }
     }
 &nbsp;
@@ -520,7 +520,7 @@ contract ZAMNFT is ERC721, Ownable {
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Feb 21 2022 02:54:33 GMT+0800 (Ulaanbaatar Standard Time)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Feb 21 2022 09:45:31 GMT+0800 (Ulaanbaatar Standard Time)
 </div>
 </div>
 <script src="../prettify.js"></script>
