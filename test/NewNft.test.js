@@ -83,14 +83,14 @@ contract('New NFT contract testing', (accounts) => {
         res = presalePrice * mintAmount
         await nft.mint(mintAmount, 2, proof, {from: lvl_2[0], value: res.toString()})
 
-        res = await nft.ownerOf(6999)
-        assert.equal(res, lvl_2[0], 'level-1 nft[0] owner')
-
         res = await nft.ownerOf(7000)
         assert.equal(res, lvl_2[0], 'level-1 nft[0] owner')
 
+        res = await nft.ownerOf(7001)
+        assert.equal(res, lvl_2[0], 'level-1 nft[0] owner')
+
         try {
-            res = await nft.ownerOf(7001)
+            res = await nft.ownerOf(7002)
         } catch (error) {
             assert.notEqual(typeof(error), undefined, 'sdfsdf')                
         }
@@ -104,14 +104,14 @@ contract('New NFT contract testing', (accounts) => {
         res = presalePrice * mintAmount
         await nft.mint(mintAmount, 3, proof, {from: lvl_3[0], value: res.toString()})
 
-        res = await nft.ownerOf(8499)
-        assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
-
         res = await nft.ownerOf(8500)
         assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
 
+        res = await nft.ownerOf(8501)
+        assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
+
         try {
-            res = await nft.ownerOf(8501)
+            res = await nft.ownerOf(8502)
         } catch (error) {
             assert.notEqual(typeof(error), undefined, 'sdfsdf')                
         }
@@ -132,13 +132,10 @@ contract('New NFT contract testing', (accounts) => {
 
         let mintAmount = 2
         res = publicsalePrice * mintAmount
-        await nft.mint(mintAmount, 1, publicSaleProof, {from: lvl_1[0], value: res.toString()})
-
-        res = await nft.ownerOf(2)
-        assert.equal(res, lvl_1[0], 'level-1 nft[0] owner')
+        res = await nft.mint(mintAmount, 1, publicSaleProof, {from: lvl_1[0], value: res.toString()})
 
         res = await nft.balanceOf(lvl_1[0])
-        assert.equal(res, 4, 'level-1 owner balance')
+        assert.equal(res, 4, 'lvl_1[0] balance is 4')
     })
 
     it('public sale level 2', async() => {
@@ -149,86 +146,73 @@ contract('New NFT contract testing', (accounts) => {
         res = publicsalePrice * mintAmount
         await nft.mint(mintAmount, 2, publicSaleProof, {from: lvl_2[0], value: res.toString()})
 
-        res = await nft.ownerOf(7001)
-        assert.equal(res, lvl_2[0], 'level-2 nft[0] owner')
+        // res = await nft.ownerOf(7001)
+        // assert.equal(res, lvl_2[0], 'level-2 nft[0] owner')
 
-        res = await nft.ownerOf(7002)
-        assert.equal(res, lvl_2[0], 'level-2 nft[0] owner')
+        // res = await nft.ownerOf(7002)
+        // assert.equal(res, lvl_2[0], 'level-2 nft[0] owner')
 
-        try {
-            res = await nft.ownerOf(7003)
-        } catch (error) {
-            assert.notEqual(typeof(error), undefined, 'sdfsdf')                
-        }
+        // try {
+        //     res = await nft.ownerOf(7003)
+        // } catch (error) {
+        //     assert.notEqual(typeof(error), undefined, 'sdfsdf')                
+        // }
 
         res = await nft.balanceOf(lvl_2[0])
         assert.equal(res, 4, 'level-1 owner balance')
     })
 
-    it('public sale level 3', async() => {
-        res = await nft.presale.call()
-        assert.equal(res, false, 'variable presale is true')
+    // it('public sale level 3', async() => {
+    //     res = await nft.presale.call()
+    //     assert.equal(res, false, 'variable presale is true')
 
-        let mintAmount = 2
-        res = publicsalePrice * mintAmount
-        await nft.mint(mintAmount, 3, publicSaleProof, {from: lvl_3[0], value: res.toString()})
+    //     let mintAmount = 2
+    //     res = publicsalePrice * mintAmount
+    //     await nft.mint(mintAmount, 3, publicSaleProof, {from: lvl_3[0], value: res.toString()})
 
-        res = await nft.ownerOf(8501)
-        assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
+    //     res = await nft.ownerOf(8501)
+    //     assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
 
-        res = await nft.ownerOf(8502)
-        assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
+    //     res = await nft.ownerOf(8502)
+    //     assert.equal(res, lvl_3[0], 'level-3 nft[0] owner')
 
-        try {
-            res = await nft.ownerOf(8503)
-        } catch (error) {
-            assert.notEqual(typeof(error), undefined, 'sdfsdf')                
-        }
+    //     try {
+    //         res = await nft.ownerOf(8503)
+    //     } catch (error) {
+    //         assert.notEqual(typeof(error), undefined, 'sdfsdf')                
+    //     }
         
-        res = await nft.balanceOf(lvl_2[0])
-        assert.equal(res, 4, 'level-1 owner balance')
-    })
+    //     res = await nft.balanceOf(lvl_2[0])
+    //     assert.equal(res, 4, 'level-1 owner balance')
+    // })
 
     it('_baseURI', async() => {
         res = await nft.tokenURI(0)
         assert.equal(res, "baseURI/0", "baseURI testing")
     })
 
-    it('special list mint', async() => {
-        let mintAmount = 2
-        await nft.mint(mintAmount, 1, publicSaleProof, {from: specialList[0]})
+    // it('special list mint', async() => {
+    //     let mintAmount = 2
+    //     await nft.mint(mintAmount, 1, publicSaleProof, {from: specialList[0]})
 
-        res = await nft.ownerOf(4)
-        assert.equal(res, specialList[0], 'special list 0 is owner')
+    //     res = await nft.ownerOf(4)
+    //     assert.equal(res, specialList[0], 'special list 0 is owner')
 
-        res = await nft.balanceOf(specialList[0])
-        assert.equal(res, 2, 'level-1 owner balance')
-    })
+    //     res = await nft.balanceOf(specialList[0])
+    //     assert.equal(res, 2, 'level-1 owner balance')
+    // })
 
     it('balance eth', async() => {
         res = await web3.eth.getBalance(nft.address)
-        console.log(res.toString())
-    })
+        let t = 0.15 * 6 + 0.18 * 4
 
-    it('check level', async() => {
-        let level
-        let proof_1, proof_2, proof_3
-        try {
-            proof_1 = merkleTree_1.getHexProof(lvl_3[0]);
-        } catch (error) {}
+        res = await web3.eth.getBalance(accounts[0])
+        console.log(res)
 
-        try {
-            proof_2 = merkleTree_2.getHexProof(lvl_3[0]);
-        } catch (error) {}
-
-        try {
-            proof_3 = merkleTree_3.getHexProof(lvl_3[0]);
-        } catch (error) {}
-
-        if(proof_1 !== undefined) level = 1
-        if(proof_2 !== undefined) level = 2
-        if(proof_3 !== undefined) level = 3
-
-        console.log("level: ", level)
+        await nft.withdrawAll()
+    
+        res = await web3.eth.getBalance(accounts[0])
+        console.log(res)
+        
     })
 })
