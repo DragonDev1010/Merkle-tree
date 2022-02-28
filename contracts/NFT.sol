@@ -5,8 +5,11 @@ pragma solidity 0.8.12;
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract ZAMNFT is ERC721, Ownable {
+    using SafeMath for uint256;
+
     string public baseURI;
 
     bool public paused = false;
@@ -35,17 +38,26 @@ contract ZAMNFT is ERC721, Ownable {
     uint256 public totalLevel3 = 172;
     uint256 public totalOwner = 216;
 
+    address public auctionAddress;
+
+    event PublicSale(address minter, uint256 tokenId, uint256 level);
+
     constructor(
         string memory _name,
         string memory _symbol,
         string memory _initBaseURI
     ) ERC721(_name, _symbol) {
         setBaseURI(_initBaseURI);
-        minted_2 = totalLevel1 - 1;
-        minted_3 = totalLevel1 + totalLevel2 - 1;
+        minted_2 = totalLevel1;
+        minted_3 = totalLevel1 + totalLevel2;
         minted_owner = totalLevel1 + totalLevel2 + totalLevel3;
     }
 
+    receive() external payable {}
+    function withdrawAll() external onlyOwner{
+        uint256 amount = address(this).balance;
+        payable(owner()).transfer(amount);
+    }
     function _baseURI() internal view virtual override returns (string memory) {
         return baseURI;
     }
@@ -106,22 +118,25 @@ contract ZAMNFT is ERC721, Ownable {
     }
 
     function mint(uint256 amount, uint256 level, bytes32[] memory proof) public payable {
-        // uint256 supply = totalSupply();
         require(!paused);
         require(amount > 0);
-        if(inArray(msg.sender)) {
-            require(amount < specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount");
-            require(!presale, "mint : special-list can mint in public-sale.");
-            _publicsale(msg.sender, amount, level);
+        if(presale) {
+            if(inArray(msg.sender))
+                require(amount < specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount");
+            else 
+                require(amount < maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
+            
+            require(msg.value == preSalePrice * amount, "Presale : NFT price is 0.15 ETH.");
+            _presale(msg.sender, amount, level, proof);
         } else {
-            require(amount < maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
-            if(presale) {
-                require(msg.value >= amount * preSalePrice, "mint : msg.value has to be greater than amount * price");
-                _presale(msg.sender, amount, level, proof);
-            } else {
-                require(msg.value >= amount * publicSalePrice, "mint : msg.value has to be greater than amount * price");
-                _publicsale(msg.sender, amount, level);
-            }
+            if(inArray(msg.sender))
+                require(amount < specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount");
+            else 
+                require(amount < maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
+            
+            require(msg.value == publicSalePrice * amount, "Public sale : NFT price is 0.18 ETH.");
+            uint256 rndLevel = random().mod(3).add(1);
+            _publicsale(msg.sender, amount, rndLevel);
         }
     }
 
@@ -132,27 +147,47 @@ contract ZAMNFT is ERC721, Ownable {
 
     function _publicsale(address minter, uint256 amount, uint256 level) private {
         if(level == 1) {
+            require(minted_1 < 7000, "Mint Level 1 : 7000 lvl-1 NFTs has already been minted.");
             for(uint256 i = 0 ; i < amount ; i++) {
                 _safeMint(minter, (minted_1+i));
+                emit PublicSale(minter, minted_1+i, 1);
             }
             minted_1 += amount;
         } else if (level == 2) {
+            require(minted_2 < 8500, "Mint Level 2 : 1500 lvl-2 NFTs has already been minted.");
             for(uint256 i = 0 ; i < amount ; i++) {
                 _safeMint(minter, (minted_2+i));
+                emit PublicSale(minter, minted_2+i, 2);
             }
             minted_2 += amount;
         } else if (level == 3) {
+            require(minted_3 < 8870, "Mint Level 3 : 370 lvl-3 NFTs has already been minted.");
             for(uint256 i = 0 ; i < amount ; i++) {
                 _safeMint(minter, (minted_3+i));
+                emit PublicSale(minter, minted_3+i, 3);
             }
             minted_3 += amount;
         }
     }
 
+    function mintAuction() public onlyOwner {
+        for(uint256 i = 8870 ; i < 8887 ; i++)
+			_safeMint(auctionAddress, i);
+    }
+
     function setPresale(bool state) public onlyOwner {
         presale = state;
     }
+    
     function setPaused(bool state) public onlyOwner {
         paused = state;
     }
+
+    function random() private view returns(uint256){
+        return uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
+    }
+
+    function setAuctionAddress(address auction_) public onlyOwner {
+		auctionAddress = auction_;
+	}
 }
