@@ -5,5 +5,5 @@ const NFT = artifacts.require("ZAMNFT")
 module.exports = async function (deployer) {
   	await deployer.deploy(ZamStacking);
   	await deployer.deploy(TestToken, "ZamStake", "ZAM")
-	await deployer.deploy(NFT, "ZamNft", "ZAM", "baseURI");
+	await deployer.deploy(NFT, "ZamNft", "ZAM", "baseURI/");
 };
