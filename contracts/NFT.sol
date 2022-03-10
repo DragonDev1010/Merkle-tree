@@ -15,7 +15,8 @@ contract ZAMNFT is ERC721, Ownable {
     bool public paused = false;
     bool public presale = true;
 
-    uint256 public maxMintAmount = 3;
+    uint256 public presaleMaxMintAmount = 10;
+    uint256 public publicsaleMaxMintAmount = 5;
 
     uint256 public preSalePrice = 0.15 ether;
     uint256 public publicSalePrice = 0.18 ether;
@@ -124,7 +125,7 @@ contract ZAMNFT is ERC721, Ownable {
             if(inArray(msg.sender))
                 require(amount < specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount");
             else 
-                require(amount < maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
+                require(amount < presaleMaxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
             
             require(msg.value == preSalePrice * amount, "Presale : NFT price is 0.15 ETH.");
             _presale(msg.sender, amount, level, proof);
@@ -132,7 +133,7 @@ contract ZAMNFT is ERC721, Ownable {
             if(inArray(msg.sender))
                 require(amount < specailListMaxMintAmount[msg.sender], "mint : special-list wallet mint amount has to be less or equal than maximum mint amount");
             else 
-                require(amount < maxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
+                require(amount < publicsaleMaxMintAmount, "mint : mint amount has to be less or equal than maximum mint amount");
             
             require(msg.value == publicSalePrice * amount, "Public sale : NFT price is 0.18 ETH.");
             uint256 rndLevel = random().mod(3).add(1);
