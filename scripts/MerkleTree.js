@@ -1,11 +1,15 @@
 const {MerkleTree} = require("merkletreejs")
 const keccak256 = require("keccak256")
 
-const lvl_1_data = require("./wallet_1.json")
-const lvl_2_data = require("./wallet_2.json")
-const lvl_3_data = require("./wallet_3.json")
+const whitelist = require("./whitelist.json")
 
-function makeMerkleTree(addresses) {
+function makeMerkleTree(level) {
+    let addresses = []
+    for(let i = 0 ; i < whitelist.length ; i++) {
+        // please check if the type of function parameter `level` is number.
+        if(whitelist[i].level == level)
+            addresses.push(whitelist[i].wallet)
+    }
     let leafNodes = addresses.map(item => keccak256(item))
     let tree = new MerkleTree(leafNodes, keccak256, {sortPairs: true})
     return tree
@@ -22,16 +26,12 @@ function getProof(tree, address) {
 
 function main() {
     console.log("* * * MERKLE TREE * * *")
-
-    const tree_1 = makeMerkleTree(lvl_1_data)
+    let account_1 = "0x00000"
+    const tree_1 = makeMerkleTree(1)
     const root_1 = getMerkleTreeRoot(tree_1)
-    const proof_1 = getProof(tree_1, lvl_1_data[3])
-    const proof_2 = getProof(tree_1, lvl_1_data[4])
-
-    // console.log("Tree : ", tree_1)
-    // console.log("Root : ", root_1)
-    console.log("Proof : ", proof_1)
-    console.log("Proof : ", proof_2)
+    // Smart contract owner has to set Merkle Tree Root with this `root_1` and `level`
+    const proof_1 = getProof(tree_1, account_1)
+    console.log(proof_1)
 }
 
 main()

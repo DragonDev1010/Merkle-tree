@@ -154,10 +154,11 @@ contract TrillioHeirs is ERC721, Ownable{
     }
 
     function presaleMint(uint256 amount, uint256 lvl, bytes32[] memory proof) public payable emergencyPause isPresale {
+        uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
+        require(estimatedAmount <= presaleMaxMint, "TrillioHeirs.presaleMint : You have already minted max NFTs or you are going to mint too many NFTs now.");
         require(_verifyWhitelist(proof, lvl), "TrillioHeirs.presaleMint : Only whitelisted wallet can attend in presale.");
         require(_getPresoldAmount() <= 3000, "TrillioHeirs.presaleMint : In presale, Only 3000 NFTs can be mint.");
-        require(amount <= presaleMaxMint, "TrillioHeirs.presaleMint : Try minting more than max mint amount.");
-        require(_getRemainingForLvl(lvl) > amount, "TrillioHeirs.presaleMint : Mint amount can not be greater than remaining NFT amount in each level.");
+        require(_getRemainingForLvl(lvl) >= amount, "TrillioHeirs.presaleMint : Mint amount can not be greater than remaining NFT amount in each level.");
         require(msg.value == _getPresaleCost(amount), "TrillioHeirs.presaleMint : Msg.value is less than the real value.");
         if(lvl == 1) {
             for(uint256 i = 0 ; i < amount ; i++)
@@ -165,11 +166,11 @@ contract TrillioHeirs is ERC721, Ownable{
             mintedAmount_1 += amount;
         } else if (lvl == 2) {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_2 + i);
+                _safeMint(msg.sender, (mintedAmount_2 + maxMint_1 + i));
             mintedAmount_2 += amount;
         } else {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_3 + i);
+                _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + i));
             mintedAmount_3 += amount;
         }
     }
@@ -194,6 +195,8 @@ contract TrillioHeirs is ERC721, Ownable{
     }
 
     function publicsaleMint(uint256 amount) public payable emergencyPause  {
+        uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
+        require(estimatedAmount <= publicsaleMaxMint, "TrillioHeirs.publicsaleMint : You have already minted max NFTs or you are going to mint too many NFTs now.");
         uint256 randomLvl = _getRandomLevel(amount);
         require(randomLvl == 0, "TrillioHeirs.publicsaleMint : Amount of remaining NFT for each level is not enough.");
         require(msg.value == _getPublicsaleCost(amount), "TrillioHeirs.publicsaleMint : Msg.value is not enough.");
@@ -203,11 +206,11 @@ contract TrillioHeirs is ERC721, Ownable{
             mintedAmount_1 += amount;
         } else if (randomLvl == 2) {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_2 + i);
+                _safeMint(msg.sender, (mintedAmount_2 + maxMint_1 + i));
             mintedAmount_2 += amount;
         } else {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_3 + i);
+                _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + i));
             mintedAmount_3 += amount;
         }
     }
@@ -226,11 +229,11 @@ contract TrillioHeirs is ERC721, Ownable{
             mintedAmount_1 += amount;
         } else if (lvl == 2) {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_2 + i);
+                _safeMint(msg.sender, (mintedAmount_2 + maxMint_1 + i));
             mintedAmount_2 += amount;
         } else {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_3 + i);
+                _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + i));
             mintedAmount_3 += amount;
         }
     }
@@ -249,12 +252,12 @@ contract TrillioHeirs is ERC721, Ownable{
             ownerMint_1 += amount;
         } else if (lvl == 2) {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_2 + i);
+                _safeMint(msg.sender, (mintedAmount_2 + maxMint_1 + i));
             mintedAmount_2 += amount;
             ownerMint_2 += amount;
         } else {
             for(uint256 i = 0 ; i < amount ; i++)
-                _safeMint(msg.sender, mintedAmount_3 + i);
+                _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + i));
             mintedAmount_3 += amount;
             ownerMint_3 += amount;
         }
@@ -265,7 +268,7 @@ contract TrillioHeirs is ERC721, Ownable{
         uint256 remaining = maxMint_auction.sub(mintedAmount_4);
         require(amount <= remaining, "TrilloHeirs.auctionMint : NFT is not enough.");
         for(uint256 i = 0 ; i < amount ; i++)
-            _safeMint(msg.sender, mintedAmount_4 + i);
+            _safeMint(msg.sender, (mintedAmount_4 + maxMint_1 + maxMint_2 + maxMint_3 + i));
         mintedAmount_4 += amount;
     }
 }
