@@ -48,12 +48,29 @@ contract('TrillioHeirs Contract', (accounts) => {
         assert.equal(res, accounts[0], "owner of token")
     })
 
-    it('checking remaining nft for each level', async() => {
-        let proof = tree_1.getHexProof(keccak256(accounts[0]));
-        await trillioHeirs.presaleMint(4, 1, proof, {from: accounts[0], value: web3.utils.toWei("0.6", "ether")})
+    it('special list sale', async() => {
+        await trillioHeirs.setPresale(false, {from: accounts[0]})
 
-        
+        await trillioHeirs.addSpecialWallet([accounts[1]], 1)
+        await trillioHeirs.setSpecialMaxMintAmount([accounts[1]], 10)
+        await trillioHeirs.specialMint(4, {from: accounts[1]})
+
+        await trillioHeirs.addSpecialWallet([accounts[2]], 2)
+        await trillioHeirs.setSpecialMaxMintAmount([accounts[2]], 10)
+        await trillioHeirs.specialMint(4, {from: accounts[2]})
     })
+
+    it('public sale', async() => {
+        await trillioHeirs.setPresale(false, {from: accounts[0]})
+        await trillioHeirs.publicsaleMint(1, {from: accounts[0], value: web3.utils.toWei("0.18", "ether")})
+
+        await trillioHeirs.publicsaleMint(3, {from: accounts[4], value: web3.utils.toWei("0.54", "ether")})
+    })
+
+    // it('checking remaining nft for each level', async() => {
+    //     let proof = tree_1.getHexProof(keccak256(accounts[0]));
+    //     await trillioHeirs.presaleMint(4, 1, proof, {from: accounts[0], value: web3.utils.toWei("0.6", "ether")})
+    // })
 
     // it('test max mint for each level', async() => {
     //     let proof = tree_1.getHexProof(keccak256(accounts[0]));

@@ -194,11 +194,11 @@ contract TrillioHeirs is ERC721, Ownable{
         return amount.mul(publicsalePrice);
     }
 
-    function publicsaleMint(uint256 amount) public payable emergencyPause  {
+    function publicsaleMint(uint256 amount) public payable emergencyPause isPublicsale {
         uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
         require(estimatedAmount <= publicsaleMaxMint, "TrillioHeirs.publicsaleMint : You have already minted max NFTs or you are going to mint too many NFTs now.");
         uint256 randomLvl = _getRandomLevel(amount);
-        require(randomLvl == 0, "TrillioHeirs.publicsaleMint : Amount of remaining NFT for each level is not enough.");
+        require(randomLvl != 0, "TrillioHeirs.publicsaleMint : Amount of remaining NFT for each level is not enough.");
         require(msg.value == _getPublicsaleCost(amount), "TrillioHeirs.publicsaleMint : Msg.value is not enough.");
         if(randomLvl == 1) {
             for(uint256 i = 0 ; i < amount ; i++)
@@ -216,10 +216,12 @@ contract TrillioHeirs is ERC721, Ownable{
     }
 
     function specialMint(uint256 amount) public emergencyPause isPublicsale {
+        require(specialListInfo[msg.sender].level != 0, "TrillioHeirs.specialMint : You are not listed in special list.");
         uint256 remain = _getRemainingForLvl(1).add(_getRemainingForLvl(2)).add(_getRemainingForLvl(3)).sub(_getRemainingOwnerMintAmount());
         require(amount <= remain, "TrilloHeirs.specialMint : Remaining NFT is not enough.");
         uint256 max = specialListInfo[msg.sender].maxMintAmount;
-        require(amount <= max, "Trillioheirs.specialMint : Amount can not be greater than max mint amount.");
+        uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
+        require(estimatedAmount <= max, "Trillioheirs.specialMint : You have already minted max NFTs or you are going to mint too many NFTs now.");
 
         uint256 lvl = specialListInfo[msg.sender].level;
         require(amount <= _getRemainingForLvl(lvl), "Trillioheirs.specialMint : Remaining NFT for level is not enough.");
