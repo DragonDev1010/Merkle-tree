@@ -14,10 +14,10 @@ contract TrillioHeirs is ERC721, Ownable {
     bool public presale = true;
     string public baseURI;
 
-    uint256 public mintedAmount_1;
-    uint256 public mintedAmount_2;
-    uint256 public mintedAmount_3;
-    uint256 public mintedAmount_4;
+    uint256 public mintedAmount_1 = 0;
+    uint256 public mintedAmount_2 = 0;
+    uint256 public mintedAmount_3 = 0;
+    uint256 public mintedAmount_4 = 0;
 
     uint256 public maxMint_presale = 3000;
     uint256 public maxMint_1 = 7000;
@@ -194,13 +194,13 @@ contract TrillioHeirs is ERC721, Ownable {
             require(randomLvl > 0, "TrillioHeirs: Amount of remaining NFT for each level is not enough");
 
             if (randomLvl == 1) {
-                _safeMint(msg.sender, mintedAmount_1 + i);
+                _safeMint(msg.sender, mintedAmount_1 + 1);
                 mintedAmount_1 += 1;
             } else if (randomLvl == 2) {
-                _safeMint(msg.sender, (mintedAmount_2 + maxMint_1 + i));
+                _safeMint(msg.sender, (mintedAmount_2 + maxMint_1 + 1));
                 mintedAmount_2 += 1;
             } else {
-                _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + i));
+                _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + 1));
                 mintedAmount_3 += 1;
             }
         }
