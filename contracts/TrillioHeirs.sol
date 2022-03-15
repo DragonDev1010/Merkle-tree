@@ -36,10 +36,10 @@ contract TrillioHeirs is ERC721, Ownable {
     bytes32 private merkleTreeRoot_3;
 
     uint256 public ownerMintTotal = 206;
-    uint256 ownerMint_1;
-    uint256 ownerMint_2;
-    uint256 ownerMint_3;
-    uint256 ownerMint_4;
+    uint256 ownerMint_1 = 0;
+    uint256 ownerMint_2 = 0;
+    uint256 ownerMint_3 = 0;
+    uint256 ownerMint_4 = 0;
 
     struct SpecialWallet {
         uint256 level;
