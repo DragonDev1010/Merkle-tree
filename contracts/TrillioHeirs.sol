@@ -53,7 +53,7 @@ contract TrillioHeirs is ERC721, Ownable {
 
     receive() external payable {}
 
-    function withdrawAll() external onlyOwner{
+    function withdrawAll() external onlyOwner {
         uint256 amount = address(this).balance;
         payable(owner()).transfer(amount);
     }
