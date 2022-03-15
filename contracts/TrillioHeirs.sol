@@ -142,7 +142,7 @@ contract TrillioHeirs is ERC721, Ownable {
         uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
         require(estimatedAmount <= presaleMaxMint, "TrillioHeirs: You have already minted max NFTs or you are going to mint too many NFTs now");
         require(_verifyWhitelist(proof, lvl), "TrillioHeirs: Only whitelisted wallet can attend in presale");
-        require(_getPresoldAmount() <= maxMint_presale, "TrillioHeirs: In presale, Only 3000 NFTs can be mint");
+        require(_getPresoldAmount() < maxMint_presale, "TrillioHeirs: In presale, Only 3000 NFTs can be mint");
         require(_getRemainingForLvl(lvl) >= amount, "TrillioHeirs: Mint amount can not be greater than remaining NFT amount in each level");
         require(msg.value == _getPresaleCost(amount), "TrillioHeirs: Msg.value is less than the real value");
         if (lvl == 1) {
@@ -179,7 +179,7 @@ contract TrillioHeirs is ERC721, Ownable {
         return amount.mul(publicsalePrice);
     }
 
-    function publicsaleMint(uint256 amount) public payable emergencyPause  {
+    function publicsaleMint(uint256 amount) public payable emergencyPause isPublicsale {
         uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
         require(estimatedAmount <= publicsaleMaxMint, "TrillioHeirs: You have already minted max NFTs or you are going to mint too many NFTs now");
         require(msg.value == _getPublicsaleCost(amount), "TrillioHeirs: Msg.value is not enough");
