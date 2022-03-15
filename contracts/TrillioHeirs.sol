@@ -35,6 +35,8 @@ contract TrillioHeirs is ERC721, Ownable {
     bytes32 private merkleTreeRoot_2;
     bytes32 private merkleTreeRoot_3;
 
+    mapping(address => bool) presaleAttenders;
+
     uint256 public ownerMintTotal = 206;
     uint256 ownerMint_1 = 0;
     uint256 ownerMint_2 = 0;
@@ -158,6 +160,7 @@ contract TrillioHeirs is ERC721, Ownable {
                 _safeMint(msg.sender, (mintedAmount_3 + maxMint_1 + maxMint_2 + i));
             mintedAmount_3 += amount;
         }
+        presaleAttenders[msg.sender] = true;
     }
 
     function _getRandomLevel() private view returns(uint256) {
@@ -181,7 +184,10 @@ contract TrillioHeirs is ERC721, Ownable {
 
     function publicsaleMint(uint256 amount) public payable emergencyPause isPublicsale {
         uint256 estimatedAmount = balanceOf(msg.sender).add(amount);
-        require(estimatedAmount <= publicsaleMaxMint, "TrillioHeirs: You have already minted max NFTs or you are going to mint too many NFTs now");
+        if(presaleAttenders[msg.sender])
+            require(estimatedAmount <= (publicsaleMaxMint + presaleMaxMint), "TrillioHeirs: You have already minted max NFTs or you are going to mint too many NFTs now");
+        else
+            require(estimatedAmount <= publicsaleMaxMint, "TrillioHeirs: You have already minted max NFTs or you are going to mint too many NFTs now");
         require(msg.value == _getPublicsaleCost(amount), "TrillioHeirs: Msg.value is not enough");
         for (uint256 i = 1; i <= amount ; i++) {
             uint256 randomLvl = _getRandomLevel();
@@ -205,7 +211,10 @@ contract TrillioHeirs is ERC721, Ownable {
         uint256 remain = _getRemainingForLvl(1).add(_getRemainingForLvl(2)).add(_getRemainingForLvl(3));
         require(amount <= remain, "TrilloHeirs: Remaining NFT is not enough");
         uint256 maxMintAmount = specialListInfo[msg.sender].maxMintAmount;
-        require(estimatedAmount <= maxMintAmount, "Trillioheirs: Amount can not be greater than max mint amount");
+        if(presaleAttenders[msg.sender])
+            require(estimatedAmount <= (maxMintAmount + presaleMaxMint), "Trillioheirs: Amount can not be greater than max mint amount");
+        else
+            require(estimatedAmount <= maxMintAmount, "Trillioheirs: Amount can not be greater than max mint amount");
         uint256 lvl = specialListInfo[msg.sender].level;
         require(amount <= _getRemainingForLvl(lvl), "Trillioheirs: Remaining NFT for level is not enough");
 
