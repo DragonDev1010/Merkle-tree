@@ -1,3 +1,3 @@
 # Merkle-tree
-NFT presale contract
-Verify whitelist addresses using Merkle Tree
+NFT presale contract  
+Verify whitelist addresses using Merkle Tree  
